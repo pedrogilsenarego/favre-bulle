@@ -28,10 +28,16 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
   });
 
   const handleSubmitNewsletter = async (email: string) => {
-    await fetch("/api/hello", {
-      method: "POST",
-      body: JSON.stringify(email),
-    });
+    try {
+      setIsLoading(true);
+      await fetch("/api/newsletter-submit", {
+        method: "POST",
+        body: JSON.stringify(email),
+      });
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -39,7 +45,6 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
       <form
         className={cn(className)}
         onSubmit={handleSubmit((e) => {
-          console.log(e);
           handleSubmitNewsletter(e.email);
         })}
       >
