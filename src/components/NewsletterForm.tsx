@@ -33,7 +33,7 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
       >
         <Input
           id="name"
-          className="w-[400px] pl-6"
+          className="w-[300px] pl-6"
           size={32}
           {...register("email")}
         />
