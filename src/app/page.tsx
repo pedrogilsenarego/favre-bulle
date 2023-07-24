@@ -11,14 +11,10 @@ export default function Home() {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const response = await fetch("/api/hello");
-      const data = await response.json();
-      setMessage(data.message);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    const res = await fetch("/api/hello", { method: "GET" });
+    //if(res !==null) {setMessage(res?.body?.JSON.stringify())}
   };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex flex-col gap-4 items-center">

@@ -13,7 +13,9 @@ interface NewsletterFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   type FormData = z.infer<typeof NewsletterValidator>;
+
   const {
     handleSubmit,
     register,
@@ -25,11 +27,21 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
     },
   });
 
+  const handleSubmitNewsletter = async (email: string) => {
+    await fetch("/api/hello", {
+      method: "POST",
+      body: JSON.stringify(email),
+    });
+  };
+
   return (
     <div>
       <form
         className={cn(className)}
-        onSubmit={handleSubmit((e) => console.log("teste"))}
+        onSubmit={handleSubmit((e) => {
+          console.log(e);
+          handleSubmitNewsletter(e.email);
+        })}
       >
         <Input
           id="name"
