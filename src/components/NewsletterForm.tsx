@@ -40,7 +40,7 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
         {errors?.email && (
           <p className="px-1 text-xs text-red-600">{errors.email.message}</p>
         )}
-        <Button isLoading={isLoading}>Change name</Button>
+        <Button isLoading={isLoading}>Submit Email</Button>
       </form>
     </div>
   );
