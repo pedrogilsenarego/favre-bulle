@@ -50,6 +50,7 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
       >
         <Input
           id="name"
+          placeholder="E-mail"
           className="w-[300px] pl-6"
           size={32}
           {...register("email")}
