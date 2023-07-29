@@ -2,20 +2,18 @@
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { NewsletterValidator } from "@/lib/validators/newsletter";
+import { FormData, NewsletterValidator } from "@/lib/validators/newsletter";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 
 interface NewsletterFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  type FormData = z.infer<typeof NewsletterValidator>;
-
   const {
     handleSubmit,
     register,
@@ -27,25 +25,51 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
     },
   });
 
-  const handleSubmitNewsletter = async (email: string) => {
-    try {
-      setIsLoading(true);
-      await fetch("/api/newsletter-submit", {
-        method: "POST",
-        body: JSON.stringify(email),
-      });
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
+  const { mutate: subscribe, isLoading } = useMutation(
+    async (email: string) => {
+      const payload = {
+        email: email,
+      };
+
+      const response = await axios.post("/api/newsletter-submit", payload);
+      return response.data as string;
+    },
+    {
+      onError: (err) => {
+        if (err instanceof AxiosError) {
+          if (err.response?.status === 409) {
+            return toast({
+              title: "User already subscribed.",
+              description: "Please choose a different email.",
+              variant: "destructive",
+            });
+          }
+
+          if (err.response?.status === 422) {
+            return toast({
+              title: "Invalid email.",
+              description: "Please choose a valid email.",
+              variant: "destructive",
+            });
+          }
+        }
+      },
+      onSuccess: (data) => {
+        toast({
+          title: "Subscription sucessfull.",
+          description: data,
+          variant: "default",
+        });
+      },
     }
-  };
+  );
 
   return (
     <div>
       <form
         className={cn(className)}
         onSubmit={handleSubmit((e) => {
-          handleSubmitNewsletter(e.email);
+          subscribe(e.email);
         })}
       >
         <Input

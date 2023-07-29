@@ -1,4 +1,6 @@
+import { NewsletterValidator } from "@/lib/validators/newsletter";
 import axios from "axios";
+import { z } from "zod";
 
 function getRequestParams(email: string) {
   // get env variables
@@ -34,7 +36,10 @@ function getRequestParams(email: string) {
 }
 
 export async function POST(request: Request) {
-  const email = await request.json();
+  const body = await request.json();
+  const { email } = NewsletterValidator.parse(body);
+
+  console.log(email);
 
   if (!email || !email.length) {
     return new Response(JSON.stringify("The email is not valid"));
@@ -46,11 +51,16 @@ export async function POST(request: Request) {
     console.log(url);
     const response = await axios.post(url, data, { headers });
     // Success
-    return new Response(JSON.stringify("The user was subscribed"));
-  } catch (error) {
+    return new Response(JSON.stringify("The user was subscribed"), {
+      status: 200,
+    });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return new Response(error.message, { status: 422 });
+    }
     return new Response(
       JSON.stringify(
-        "An error occured, please sendn an email to pedrogilsenarego@gmail.com"
+        `An error occured, please send an email to pedrogilsenarego@gmail.com`
       )
     );
   }
