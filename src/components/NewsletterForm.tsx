@@ -16,6 +16,7 @@ interface NewsletterFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
   const {
     handleSubmit,
+    reset,
     register,
     formState: { errors },
   } = useForm<FormData>({
@@ -55,6 +56,7 @@ const NewsletterForm = ({ className, ...props }: NewsletterFormProps) => {
         }
       },
       onSuccess: (data) => {
+        reset();
         toast({
           title: "Subscription sucessfull.",
           description: data,

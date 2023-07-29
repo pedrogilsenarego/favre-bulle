@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     console.log(url);
     const response = await axios.post(url, data, { headers });
     // Success
-    return new Response(JSON.stringify("The user was subscribed"), {
+    return new Response(JSON.stringify("Thank you for the subscription"), {
       status: 200,
     });
   } catch (error: any) {
